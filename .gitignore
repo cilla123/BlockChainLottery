@@ -1,0 +1,17 @@
+# idea
+.idea
+
+# node_modules
+node_modules/
+
+# package-lock.json
+package-lock.json
+
+# dist
+dist/
+
+# vscode
+.vscode
+
+# 智能合约部署路径
+contract_build/
