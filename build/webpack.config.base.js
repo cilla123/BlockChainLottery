@@ -51,12 +51,12 @@ module.exports = {
     //     name: "manifest"
     // },
     splitChunks: {
-      chunks: "initial", // 代码块类型 必须三选一： "initial"（初始化） | "all"(默认就是all) | "async"（动态加载）
-      minSize: 0, // 最小尺寸，默认0
-      minChunks: 1, // 最小 chunk ，默认1
-      maxAsyncRequests: 1, // 最大异步请求数， 默认1
-      maxInitialRequests: 1, // 最大初始化请求书，默认1
-      name: () => {}, // 名称，此选项可接收 function
+      // chunks: "initial", // 代码块类型 必须三选一： "initial"（初始化） | "all"(默认就是all) | "async"（动态加载）
+      // minSize: 0, // 最小尺寸，默认0
+      // minChunks: 1, // 最小 chunk ，默认1
+      // maxAsyncRequests: 1, // 最大异步请求数， 默认1
+      // maxInitialRequests: 1, // 最大初始化请求书，默认1
+      // name: () => {}, // 名称，此选项可接收 function
       cacheGroups: { // 缓存组会继承splitChunks的配置，但是test、priorty和reuseExistingChunk只能用于配置缓存组。
         commons: {
           chunks: 'initial',
@@ -142,9 +142,9 @@ module.exports = {
     }],
     // 用了noParse的模块将不会被loaders解析，所以使用的库如果太大，并且其中不包含import require、define的调用，就可以使用这项配置来提升性能, 让 Webpack 忽略对部分没采用模块化的文件的递归解析处理。
     // 但是node_modules中有的第三方框架有依赖lodash或者jquery之类的库，建议不要加入，不然容易报错
-    // noParse: function (content) {
-    //   return /jquery|lodash/.test(content)
-    // }
+    noParse: function (content) {
+      return /no-parser/.test(content); // 返回true则忽略对no-parser.js的解析
+    }
   },
 
   // webpack的插件

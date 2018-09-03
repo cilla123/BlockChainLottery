@@ -70,7 +70,7 @@ const config = smp.wrap({
       debug: true,
       filename: 'dll_[name]_[hash].js',
       entry: {
-        vendor: ['react', 'react-dom', 'mobx', 'mobx-react', 'react-router', 'react-router-dom']
+        vendor: ['react', 'react-dom', 'mobx', 'mobx-react', 'react-router', 'react-router-dom'],
       }
     }),
     // 把对JS文件的串行压缩变为开启多个子进程并行进行uglify
