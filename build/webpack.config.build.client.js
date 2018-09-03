@@ -32,7 +32,7 @@ const config = smp.wrap({
     //   openAnalyzer: false,
     //   generateStatsFile: false,
     //   statsFilename: 'stats.json',
-    //   logLevel: 'info'
+    //   logLevel: 'info',
     // }),
     // 消除冗余的css代码
     // 首先保证找路径不是异步的,所以这里用同步的方法
