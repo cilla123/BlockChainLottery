@@ -90,6 +90,7 @@ module.exports = {
       '@components': resolve('../src/client/components'),
       '@bussiness_components': resolve('../src/client/bussiness_components'),
       '@views': resolve('../src/client/views'),
+      '@images': resolve('../src/client/assets/images'),
     },
   },
 
@@ -117,19 +118,27 @@ module.exports = {
         fallback: 'style-loader', // 回滚
         use: 'happypack/loader?id=css',
         publicPath: GLOBAL_CONFIG.cdnPath //解决css背景图的路径问题
-      })
+      }),
     }, {
       test: /\.(sass|scss)$/,
-      use: 'happypack/loader?id=sass'
+      use: ExtractTextPlugin.extract({
+        fallback: 'style-loader', // 回滚
+        use: 'happypack/loader?id=sass',
+        publicPath: GLOBAL_CONFIG.cdnPath //解决css背景图的路径问题
+      }),
+      exclude: excludeSourcePaths,
+      include: includeSourcePaths
     }, {
-      test: /\.(png|jpg|gif)$/,
+      test: /\.(png|jpg|jpeg|gif|bmp)$/,
       use: [{
         loader: 'url-loader',
         options: { // 这里的options选项参数可以定义多大的图片转换为base64
           limit: 50000, // 表示小于50kb的图片转为base64,大于50kb的是路径
-          outputPath: 'images' //定义输出的图片文件夹
+          outputPath: GLOBAL_CONFIG.cdnImagePath //定义输出的图片文件夹
         }
-      }]
+      }],
+      exclude: excludeSourcePaths,
+      include: includeSourcePaths
     }],
     // 用了noParse的模块将不会被loaders解析，所以使用的库如果太大，并且其中不包含import require、define的调用，就可以使用这项配置来提升性能, 让 Webpack 忽略对部分没采用模块化的文件的递归解析处理。
     // 但是node_modules中有的第三方框架有依赖lodash或者jquery之类的库，建议不要加入，不然容易报错
@@ -140,14 +149,14 @@ module.exports = {
 
   // webpack的插件
   plugins: [
-    new HTMLPlugin({
-      template: path.join(__dirname, '../src/client/index.html')
-    }),
     new ExtractTextPlugin({
       filename: '[name].[hash].css',
     }),
+    new HTMLPlugin({
+      template: path.join(__dirname, '../src/client/index.html')
+    }),
     new CleanWebpackPlugin(
-      ['dist'], {
+      ['dist', '.cache-loader'], {
         // 根目录
         root: resolve('../'),
         // 开启在控制台输出信息
@@ -185,7 +194,7 @@ module.exports = {
       // 用id来标识 happypack处理那里类文件
       id: 'sass',
       // 如何处理  用法和loader的配置一样
-      loaders: ['cache-loader', 'style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
+      loaders: ['cache-loader', 'style-loader', 'css-loader?minimize=true', 'postcss-loader', 'sass-loader'],
       // 共享进程池
       threadPool: happyThreadPool,
       // 允许 HappyPack 输出日志

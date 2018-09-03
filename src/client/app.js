@@ -5,7 +5,6 @@ import { HashRouter, Switch, Route } from 'react-router-dom';
 
 import registerServiceWorker from './registerServiceWorker';
 import Routes from './routes'
-import Header from '@bussiness_components/Header/Header.js';
 
 import 'antd/dist/antd.css';
 
@@ -16,7 +15,6 @@ class App extends (PureComponent || Component) {
   render() {
     return (
       <div>
-        <Header />
         <Switch>
           {
             Routes.map(({ name, path, exact=true, component }) => (
@@ -38,3 +36,7 @@ render(
 
 // pwa
 registerServiceWorker();
+
+if (module.hot) {
+  module.hot.accept()
+}

@@ -23,24 +23,29 @@ function resolve(dir) {
 const config = smp.wrap({
   plugins: [
     // 查看打包结果日志
-    new BundleAnalyzerPlugin({
-      analyzerMode: 'server',
-      analyzerHost: '127.0.0.1',
-      analyzerPort: 8888,
-      reportFilename: 'report.html',
-      defaultSizes: 'parsed',
-      openAnalyzer: false,
-      generateStatsFile: false,
-      statsFilename: 'stats.json',
-      logLevel: 'info'
-    }),
+    // new BundleAnalyzerPlugin({
+    //   analyzerMode: 'server',
+    //   analyzerHost: '127.0.0.1',
+    //   analyzerPort: 8888,
+    //   reportFilename: 'report.html',
+    //   defaultSizes: 'parsed',
+    //   openAnalyzer: false,
+    //   generateStatsFile: false,
+    //   statsFilename: 'stats.json',
+    //   logLevel: 'info'
+    // }),
     // 消除冗余的css代码
-    new PurifyCssWebpack({
-      paths: glob.sync(resolve('../src/*.html'))
-    }),
+    // 首先保证找路径不是异步的,所以这里用同步的方法
+    // new PurifyCssWebpack({
+    //   paths: glob.sync(path.join('../src/*'))
+    // }),
     new HTMLPlugin({
       template: path.join(__dirname, '../src/client/index.html'),
-      minify: true, // 传一个html-minifier 配置object来压缩输出
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeAttributeQuotes: true
+      }, // 传一个html-minifier 配置object来压缩输出
       hash: true, // 如果是true，会给所有包含的script和css添加一个唯一的webpack编译hash值。这对于缓存清除非常有用
     }),
     // pwa 插件
@@ -71,7 +76,7 @@ const config = smp.wrap({
     // 把对JS文件的串行压缩变为开启多个子进程并行进行uglify
     new ParallelUglifyPlugin({
       workerCount: 4,
-      sourceMap: true,
+      sourceMap: false,
       uglifyJS: {
         output: {
           beautify: false, // 不需要格式化
