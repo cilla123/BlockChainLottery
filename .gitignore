@@ -17,4 +17,4 @@ dist/
 contract_build/
 
 # cache-loader
-.cache-loader
+.cache-loader/
