@@ -15,3 +15,6 @@ dist/
 
 # 智能合约部署路径
 contract_build/
+
+# cache-loader
+.cache-loader
