@@ -36,7 +36,7 @@ module.exports = {
 
   // 文件输出文件
   output: {
-    filename: '[name].[hash].js',
+    filename: '[name]_[hash].js',
     path: resolve('../dist'),
     publicPath: GLOBAL_CONFIG.cdnPath,
   },
@@ -51,12 +51,12 @@ module.exports = {
   //   //     name: "manifest"
   //   // },
   //   splitChunks: {
-  //     chunks: "initial", // 代码块类型 必须三选一： "initial"（初始化） | "all"(默认就是all) | "async"（动态加载）
-  //     minSize: 0, // 最小尺寸，默认0
-  //     minChunks: 1, // 最小 chunk ，默认1
-  //     maxAsyncRequests: 1, // 最大异步请求数， 默认1
-  //     maxInitialRequests: 1, // 最大初始化请求书，默认1
-  //     name: () => {}, // 名称，此选项可接收 function
+  //     // chunks: "initial", // 代码块类型 必须三选一： "initial"（初始化） | "all"(默认就是all) | "async"（动态加载）
+  //     // minSize: 0, // 最小尺寸，默认0
+  //     // minChunks: 1, // 最小 chunk ，默认1
+  //     // maxAsyncRequests: 1, // 最大异步请求数， 默认1
+  //     // maxInitialRequests: 1, // 最大初始化请求书，默认1
+  //     // name: () => {}, // 名称，此选项可接收 function
   //     cacheGroups: { // 缓存组会继承splitChunks的配置，但是test、priorty和reuseExistingChunk只能用于配置缓存组。
   //       commons: {
   //         chunks: 'initial',
