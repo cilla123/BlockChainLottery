@@ -5,7 +5,9 @@ const AutoDllPlugin = require('autodll-webpack-plugin')
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 const PurifyCssWebpack = require('purifycss-webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const path = require('path')
 const glob = require('glob')
 
@@ -21,6 +23,11 @@ function resolve(dir) {
 }
 
 const config = smp.wrap({
+  optimization: {
+    minimizer: [
+      new OptimizeCSSAssetsPlugin({})
+    ]
+  },
   plugins: [
     // 查看打包结果日志
     // new BundleAnalyzerPlugin({

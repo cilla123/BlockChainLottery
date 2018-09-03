@@ -3,7 +3,7 @@ const path = require('path')
 const os = require('os')
 const HTMLPlugin = require('html-webpack-plugin')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
-var ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 
 // HappyPack是让webpack对loader的执行过程，从单一进程形式扩展为多进程模式，也就是将任务分解给多个子进程去并发的执行，子进程处理完后再把结果发送给主进程。从而加速代码构建 与 DLL动态链接库结合来使用更佳。
 const HappyPack = require('happypack')
@@ -46,34 +46,34 @@ module.exports = {
   // 新代码块大于30kb（ min + gziped之前的体积）
   // 按需加载的代码块， 最大数量应该小于或者等于5
   // 初始加载的代码块， 最大数量应该小于或等于3
-  optimization: {
-    // runtimeChunk: {
-    //     name: "manifest"
-    // },
-    splitChunks: {
-      // chunks: "initial", // 代码块类型 必须三选一： "initial"（初始化） | "all"(默认就是all) | "async"（动态加载）
-      // minSize: 0, // 最小尺寸，默认0
-      // minChunks: 1, // 最小 chunk ，默认1
-      // maxAsyncRequests: 1, // 最大异步请求数， 默认1
-      // maxInitialRequests: 1, // 最大初始化请求书，默认1
-      // name: () => {}, // 名称，此选项可接收 function
-      cacheGroups: { // 缓存组会继承splitChunks的配置，但是test、priorty和reuseExistingChunk只能用于配置缓存组。
-        commons: {
-          chunks: 'initial',
-          minChunks: 2,
-          maxInitialRequests: 5,
-          minSize: 0
-        },
-        vendor: { // 将第三方模块提取出来，key 为entry中定义的 入口名称
-          test: /node_modules/,
-          chunks: 'initial',
-          name: 'vendor',
-          priority: 10, // 缓存组优先级 false | object |
-          enforce: true
-        }
-      }
-    }
-  },
+  // optimization: {
+  //   // runtimeChunk: {
+  //   //     name: "manifest"
+  //   // },
+  //   splitChunks: {
+  //     chunks: "initial", // 代码块类型 必须三选一： "initial"（初始化） | "all"(默认就是all) | "async"（动态加载）
+  //     minSize: 0, // 最小尺寸，默认0
+  //     minChunks: 1, // 最小 chunk ，默认1
+  //     maxAsyncRequests: 1, // 最大异步请求数， 默认1
+  //     maxInitialRequests: 1, // 最大初始化请求书，默认1
+  //     name: () => {}, // 名称，此选项可接收 function
+  //     cacheGroups: { // 缓存组会继承splitChunks的配置，但是test、priorty和reuseExistingChunk只能用于配置缓存组。
+  //       commons: {
+  //         chunks: 'initial',
+  //         minChunks: 2,
+  //         maxInitialRequests: 5,
+  //         minSize: 0
+  //       },
+  //       vendor: { // 将第三方模块提取出来，key 为entry中定义的 入口名称
+  //         test: /node_modules/,
+  //         chunks: 'initial',
+  //         name: 'vendor',
+  //         priority: 10, // 缓存组优先级 false | object |
+  //         enforce: true
+  //       }
+  //     }
+  //   }
+  // },
 
   // 文件解析
   resolve: {
@@ -97,7 +97,7 @@ module.exports = {
   // 模块
   module: {
     rules: [{
-      enforce: 'pre',
+      // enforce: 'pre',
       test: /.(js|jsx)$/,
       // loader: 'eslint-loader', // 目前先注释
       exclude: excludeSourcePaths,
@@ -114,18 +114,15 @@ module.exports = {
       include: includeSourcePaths
     }, {
       test: /\.css$/,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader', // 回滚
-        use: 'happypack/loader?id=css',
-        publicPath: GLOBAL_CONFIG.cdnPath //解决css背景图的路径问题
-      }),
+      use: ['cache-loader', MiniCssExtractPlugin.loader, {
+        loader: 'css-loader',
+        options: {
+          minimize: true //css压缩
+        }
+      }, 'postcss-loader'],
     }, {
       test: /\.(sass|scss)$/,
-      use: ExtractTextPlugin.extract({
-        fallback: 'style-loader', // 回滚
-        use: 'happypack/loader?id=sass',
-        publicPath: GLOBAL_CONFIG.cdnPath //解决css背景图的路径问题
-      }),
+      loaders: ['cache-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
       exclude: excludeSourcePaths,
       include: includeSourcePaths
     }, {
@@ -149,8 +146,12 @@ module.exports = {
 
   // webpack的插件
   plugins: [
-    new ExtractTextPlugin({
-      filename: '[name].[hash].css',
+    // new ExtractTextPlugin({
+    //   filename: '[name].[hash].css',
+    // }),
+    new MiniCssExtractPlugin({
+      filename: "[name]_[hash].css",
+      chunkFilename: "[id]_[hash].css"
     }),
     new HTMLPlugin({
       template: path.join(__dirname, '../src/client/index.html')
@@ -179,7 +180,7 @@ module.exports = {
       // 用id来标识 happypack处理那里类文件
       id: 'css',
       // 如何处理  用法和loader的配置一样
-      loaders: ['cache-loader', {
+      loaders: ['cache-loader', MiniCssExtractPlugin.loader, {
         loader: 'css-loader',
         options: {
           minimize: true //css压缩
@@ -194,7 +195,7 @@ module.exports = {
       // 用id来标识 happypack处理那里类文件
       id: 'sass',
       // 如何处理  用法和loader的配置一样
-      loaders: ['cache-loader', 'style-loader', 'css-loader?minimize=true', 'postcss-loader', 'sass-loader'],
+      loaders: ['cache-loader', MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'],
       // 共享进程池
       threadPool: happyThreadPool,
       // 允许 HappyPack 输出日志
