@@ -113,17 +113,12 @@ module.exports = {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
         fallback: 'style-loader', // 回滚
-        use: [{
-          loader: 'css-loader',
-          options: {
-            minimize: true //css压缩
-          }
-        }, 'postcss-loader'],
+        use: 'happypack/loader?id=css',
         publicPath: GLOBAL_CONFIG.cdnPath //解决css背景图的路径问题
       })
     }, {
       test: /\.(sass|scss)$/,
-      use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'] // 编译顺序从右往左
+      use: 'happypack/loader?id=sass'
     }, {
       test: /\.(png|jpg|gif)$/,
       use: [{
@@ -168,6 +163,31 @@ module.exports = {
       threadPool: happyThreadPool,
       // 允许 HappyPack 输出日志
       verbose: true,
-    })
+    }),
+    new HappyPack({
+      // 用id来标识 happypack处理那里类文件
+      id: 'css',
+      // 如何处理  用法和loader的配置一样
+      loaders: [{
+        loader: 'css-loader',
+        options: {
+          minimize: true //css压缩
+        }
+      }, 'postcss-loader'],
+      // 共享进程池
+      threadPool: happyThreadPool,
+      // 允许 HappyPack 输出日志
+      verbose: true,
+    }),
+    new HappyPack({
+      // 用id来标识 happypack处理那里类文件
+      id: 'sass',
+      // 如何处理  用法和loader的配置一样
+      loaders: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
+      // 共享进程池
+      threadPool: happyThreadPool,
+      // 允许 HappyPack 输出日志
+      verbose: true,
+    }),
   ]
 }
