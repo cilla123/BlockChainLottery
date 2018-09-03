@@ -146,9 +146,6 @@ module.exports = {
 
   // webpack的插件
   plugins: [
-    // new ExtractTextPlugin({
-    //   filename: '[name].[hash].css',
-    // }),
     new MiniCssExtractPlugin({
       filename: "[name]_[hash].css",
       chunkFilename: "[id]_[hash].css"

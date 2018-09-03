@@ -3,24 +3,12 @@ const HTMLPlugin = require('html-webpack-plugin')
 const { GenerateSW } = require('workbox-webpack-plugin')
 const AutoDllPlugin = require('autodll-webpack-plugin')
 const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
-const PurifyCssWebpack = require('purifycss-webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-// const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
 const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin")
 const path = require('path')
-const glob = require('glob')
 
-// package.json
-const package = require('../package.json')
 const smp = new SpeedMeasurePlugin()
-
-/**
- * 转换为绝对路径
- */
-function resolve(dir) {
-  return path.join(__dirname, dir);
-}
 
 const config = smp.wrap({
   optimization: {
@@ -40,11 +28,6 @@ const config = smp.wrap({
     //   generateStatsFile: false,
     //   statsFilename: 'stats.json',
     //   logLevel: 'info',
-    // }),
-    // 消除冗余的css代码
-    // 首先保证找路径不是异步的,所以这里用同步的方法
-    // new PurifyCssWebpack({
-    //   paths: glob.sync(path.join('../src/*'))
     // }),
     new HTMLPlugin({
       template: path.join(__dirname, '../src/client/index.html'),
